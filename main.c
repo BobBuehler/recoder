@@ -2,60 +2,54 @@
 
 #include "recoder.h"
 
-void textPrompt(char* prompt, char* dst, int size)
+void toBinaryString(uint32_t byte, int count, char* string)
 {
-    // print some text
-    fputs(prompt, stdout);
-    fflush(stdout);
-    
-    // read some text
-    fgets(dst, size, stdin);
-    
-    // clean off the trailing newline
+    uint32_t mask = 1 << (count - 1);
     int i;
-    for(i = 0; i < size; ++i)
+    for (i = 0; i < count; ++i)
     {
-        if (dst[i] == '\n')
-            dst[i] = 0;
-        if (dst[i] == 0)
-            return;
+        string[i] = (byte & (mask >> i)) != 0 ? '1' : '0';
     }
+    string[count] = '\0';
 }
 
 void testRecoder(uint32_t codePoint)
 {
-    printf("TEST\ncodePoint: %d\n", codePoint);
-    
     uint8_t bytes[4];
     int count = encode(codePoint, bytes);
+    int decoded = decode(bytes);
+    
+    char binary[33];
+    toBinaryString(codePoint, 32, binary);
+    printf("codePoint: %d | %08X | %s\n", codePoint, codePoint, binary);
+    
+    toBinaryString(decoded, 32, binary);
+    printf("decoded:   %d | %08X | %s\n", decoded, decoded, binary);
+    
     int i;
     for(i = 0; i < count; ++i)
     {
-        printf("byte[%d]: %d\n", i, bytes[i]);
+        toBinaryString(bytes[i], 8, binary);
+        printf("byte[%d]: %03d | %02X | %s\n", i, bytes[i], bytes[i], binary);
     }
-    
-    int decoded = decode(bytes);
-    printf("decoded: %d\n", decoded);
 }
 
 int main() {
-    char text[100];
-    //textPrompt("Enter some text to recode: ", text, sizeof text);
-    //printf("text: %s\n", text);
-
+    printf("----------\n");
     testRecoder(50);
-    
+    printf("----------\n");
     testRecoder(150);
-    
+    printf("----------\n");
     testRecoder(1500);
-    
+    printf("----------\n");
     testRecoder(15000);
-    
+    printf("----------\n");
     testRecoder(150000);
-    
+    printf("----------\n");
     testRecoder(1500000);
-    
+    printf("----------\n");
     testRecoder(15000000);
+    printf("----------\n");
 
     return 0;
 }
