@@ -1,0 +1,1 @@
+gcc *.c -out recoder
