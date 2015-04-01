@@ -3,14 +3,16 @@
 #ifndef RECODER
 #define RECODER
 
-uint8_t getBits(uint32_t codePoint, int start, int count);
-uint8_t setLeadingBits(uint8_t byte, int count);
-int getLeadingOneCount(uint8_t byte);
-uint32_t concatBits(uint32_t left, uint8_t right, int count);
+// Convert a unicode code point into the utf8 sequence of bytes
+// Preconditions: codePoint is a valid unicode code point.
+// bytes is long enough to store the bytes (maximum of 4).
+// Postconditions: bytes contains the utf8 encoded bytes.
+// The number of bytes used is returned.
+int utf8_encode(uint32_t codePoint, uint8_t* bytes);
 
-int getUtf8ByteCount(uint32_t codePoint);
-
-int encode(uint32_t codePoint, uint8_t* bytes);
-uint32_t decode(uint8_t* bytes);
+// Convert a sequence of utf8 bytes to the unicode code point
+// Preconditions: bytes is a valid sequence of utf8.
+// Postconditions: The unicode code point is returned.
+uint32_t utf8_decode(uint8_t* bytes);
 
 #endif

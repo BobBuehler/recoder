@@ -1,6 +1,12 @@
 #include "recoder.h"
 
-uint8_t getBits(uint32_t codePoint, int start, int count)
+// Get a number made from a substring of bits from another number
+// start specifies the least significant bit to retrieve.
+// count specifies the number of bits of increasing significance to retrieve.
+// Preconditions: start and count are non-negative.
+// start + count does not esceed 32.
+// Postconditions: returns 
+uint32_t getBits(uint32_t codePoint, int start, int count)
 {
     codePoint >>= start;
     uint32_t mask = (1 << count) - 1;
@@ -47,7 +53,8 @@ int getUtf8ByteCount(uint32_t codePoint)
         return 0;
 }
 
-int encode(uint32_t codePoint, uint8_t* bytes)
+// see recoder.h for docs
+int utf8_encode(uint32_t codePoint, uint8_t* bytes)
 {
     int count = getUtf8ByteCount(codePoint);
     switch (count)
@@ -86,7 +93,8 @@ int encode(uint32_t codePoint, uint8_t* bytes)
     return count;
 }
 
-uint32_t decode(uint8_t* bytes) {
+// see recoder.h for docs
+uint32_t utf8_decode(uint8_t* bytes) {
     uint32_t codePoint;
     switch (getLeadingOneCount(bytes[0])) {
         case 0:
