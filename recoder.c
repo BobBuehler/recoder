@@ -1,24 +1,35 @@
 #include "recoder.h"
 
-// Get a number made from a substring of bits from another number
+// Get a number made from a substring of bits from another number.
 // start specifies the least significant bit to retrieve.
 // count specifies the number of bits of increasing significance to retrieve.
 // Preconditions: start and count are non-negative.
-// start + count does not esceed 32.
-// Postconditions: returns 
-uint32_t getBits(uint32_t codePoint, int start, int count)
+// start + count does not exceed 32.
+// Postconditions: returns a new number where the range of bits specified by
+// start and count are copied from value and placed in the new number starting
+// at bit zero.
+uint32_t getBits(uint32_t value, int start, int count)
 {
-    codePoint >>= start;
+    value >>= start;
     uint32_t mask = (1 << count) - 1;
-    return (uint8_t) (codePoint & mask);
+    return (uint8_t) (value & mask);
 }
 
+// Gets a number where the highest order bits in byte are set.
+// count is the number of high order bits to set.
+// Preconditions: count is between 0 and 8, inclusive.
+// Postcondition: returns a new number which is the same as byte except the
+// highest order bits are 1s.
 uint8_t setLeadingBits(uint8_t byte, int count)
 {
     uint32_t mask = ~0 << (8 - count);
     return (uint8_t) byte | mask;
 }
 
+// Gets the number of consecutive 1s in the highest order bits.
+// Preconditions: none
+// Postconditions: returns the number of 1s found in the highest order bits
+// before a 0 is seen.
 int getLeadingOneCount(uint8_t byte)
 {
     uint8_t mask = 1 << 7;
@@ -31,6 +42,12 @@ int getLeadingOneCount(uint8_t byte)
     return count;
 }
 
+// Gets a number made from concatenating bits onto the value of left.
+// count is the number of bits to take from right.
+// Preconditions: left requires 32 - count bits to represent
+// count is between 0 and 8, inclusive.
+// Postconditions: returns the value of left shifted left and a number of bits
+// from right placed in the least significant bits.
 uint32_t concatBits(uint32_t left, uint8_t right, int count)
 {
     left = left << count;
@@ -38,7 +55,10 @@ uint32_t concatBits(uint32_t left, uint8_t right, int count)
     return left | (right & mask);
 }
 
-
+// Gets the number of bytes required in UTF-8 to encode the codePoint
+// Preconditions: none
+// Postconditions: returns the number of bytes needed or returns -1 if the
+// codePoint cannot be represented in UTF-8.
 int getUtf8ByteCount(uint32_t codePoint)
 {
     if (codePoint <= 0x7F)
@@ -50,7 +70,7 @@ int getUtf8ByteCount(uint32_t codePoint)
     else if (codePoint <= 0x1FFFFF)
         return 4;
     else
-        return 0;
+        return -1;
 }
 
 // see recoder.h for docs
