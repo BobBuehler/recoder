@@ -55,55 +55,55 @@ uint32_t concatBits(uint32_t left, uint8_t right, int count)
     return left | (right & mask);
 }
 
-// Gets the number of bytes required in UTF-8 to encode the codePoint
+// Gets the number of bytes required in UTF-8 to encode the codepoint
 // Preconditions: none
 // Postconditions: returns the number of bytes needed or returns -1 if the
-// codePoint cannot be represented in UTF-8.
-int getUtf8ByteCount(uint32_t codePoint)
+// codepoint cannot be represented in UTF-8.
+int getUtf8ByteCount(uint32_t codepoint)
 {
-    if (codePoint <= 0x7F)
+    if (codepoint <= 0x7F)
         return 1;
-    else if (codePoint <= 0x7FF)
+    else if (codepoint <= 0x7FF)
         return 2;
-    else if (codePoint <= 0xFFFF)
+    else if (codepoint <= 0xFFFF)
         return 3;
-    else if (codePoint <= 0x1FFFFF)
+    else if (codepoint <= 0x1FFFFF)
         return 4;
     else
         return -1;
 }
 
 // see recoder.h for docs
-int utf8_encode(uint32_t codePoint, uint8_t* bytes)
+int utf8_encode(uint32_t codepoint, uint8_t* bytes)
 {
-    int count = getUtf8ByteCount(codePoint);
+    int count = getUtf8ByteCount(codepoint);
     switch (count)
     {
         case 1:
-            bytes[0] = getBits(codePoint, 0, 7);
+            bytes[0] = getBits(codepoint, 0, 7);
             break;
         case 2:
-            bytes[0] = getBits(codePoint, 6, 5);
+            bytes[0] = getBits(codepoint, 6, 5);
             bytes[0] = setLeadingBits(bytes[0], 2);
-            bytes[1] = getBits(codePoint, 0, 6);
+            bytes[1] = getBits(codepoint, 0, 6);
             bytes[1] = setLeadingBits(bytes[1], 1);
             break;
         case 3:
-            bytes[0] = getBits(codePoint, 12, 4);
+            bytes[0] = getBits(codepoint, 12, 4);
             bytes[0] = setLeadingBits(bytes[0], 3);
-            bytes[1] = getBits(codePoint, 6, 6);
+            bytes[1] = getBits(codepoint, 6, 6);
             bytes[1] = setLeadingBits(bytes[1], 1);
-            bytes[2] = getBits(codePoint, 0, 6);
+            bytes[2] = getBits(codepoint, 0, 6);
             bytes[2] = setLeadingBits(bytes[2], 1);
             break;
         case 4:
-            bytes[0] = getBits(codePoint, 18, 3);
+            bytes[0] = getBits(codepoint, 18, 3);
             bytes[0] = setLeadingBits(bytes[0], 4);
-            bytes[1] = getBits(codePoint, 12, 6);
+            bytes[1] = getBits(codepoint, 12, 6);
             bytes[1] = setLeadingBits(bytes[1], 1);
-            bytes[2] = getBits(codePoint, 6, 6);
+            bytes[2] = getBits(codepoint, 6, 6);
             bytes[2] = setLeadingBits(bytes[2], 1);
-            bytes[3] = getBits(codePoint, 0, 6);
+            bytes[3] = getBits(codepoint, 0, 6);
             bytes[3] = setLeadingBits(bytes[3], 1);
             break;
         default:
@@ -115,30 +115,30 @@ int utf8_encode(uint32_t codePoint, uint8_t* bytes)
 
 // see recoder.h for docs
 uint32_t utf8_decode(uint8_t* bytes) {
-    uint32_t codePoint;
+    uint32_t codepoint;
     switch (getLeadingOneCount(bytes[0])) {
         case 0:
-            codePoint = bytes[0];
+            codepoint = bytes[0];
             break;
         case 2:
-            codePoint = getBits(bytes[0], 0, 5);
-            codePoint = concatBits(codePoint, getBits(bytes[1], 0, 6), 6);
+            codepoint = getBits(bytes[0], 0, 5);
+            codepoint = concatBits(codepoint, getBits(bytes[1], 0, 6), 6);
             break;
         case 3:
-            codePoint = getBits(bytes[0], 0, 4);
-            codePoint = concatBits(codePoint, getBits(bytes[1], 0, 6), 6);
-            codePoint = concatBits(codePoint, getBits(bytes[2], 0, 6), 6);
+            codepoint = getBits(bytes[0], 0, 4);
+            codepoint = concatBits(codepoint, getBits(bytes[1], 0, 6), 6);
+            codepoint = concatBits(codepoint, getBits(bytes[2], 0, 6), 6);
             break;
         case 4:
-            codePoint = getBits(bytes[0], 0, 3);
-            codePoint = concatBits(codePoint, getBits(bytes[1], 0, 6), 6);
-            codePoint = concatBits(codePoint, getBits(bytes[2], 0, 6), 6);
-            codePoint = concatBits(codePoint, getBits(bytes[3], 0, 6), 6);
+            codepoint = getBits(bytes[0], 0, 3);
+            codepoint = concatBits(codepoint, getBits(bytes[1], 0, 6), 6);
+            codepoint = concatBits(codepoint, getBits(bytes[2], 0, 6), 6);
+            codepoint = concatBits(codepoint, getBits(bytes[3], 0, 6), 6);
             break;
         default:
-            codePoint = 0;
+            codepoint = 0;
             break;
     }
-    return codePoint;
+    return codepoint;
 }
 
