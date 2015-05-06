@@ -12,7 +12,7 @@ uint32_t getBits(uint32_t value, int start, int count)
 {
     value >>= start;
     uint32_t mask = (1 << count) - 1;
-    return (uint8_t) (value & mask);
+    return value & mask;
 }
 
 // Gets a number where the highest order bits in byte are set.
@@ -23,7 +23,7 @@ uint32_t getBits(uint32_t value, int start, int count)
 uint8_t setLeadingBits(uint8_t byte, int count)
 {
     uint32_t mask = ~0 << (8 - count);
-    return (uint8_t) byte | mask;
+    return byte | mask;
 }
 
 // Gets the number of consecutive 1s in the highest order bits.
